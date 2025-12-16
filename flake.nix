@@ -23,7 +23,7 @@
     };
 
     cargo2nix = {
-      url = "github:cargo2nix/cargo2nix/release-0.11.0";
+      url = "github:cargo2nix/cargo2nix/release-0.12";
       inputs = {
         "flake-compat".follows = "flake-compat";
         "nixpkgs".follows = "nixpkgs";
@@ -75,7 +75,7 @@
           };
 
           rustPkgs = pkgs.rustBuilder.makePackageSet {
-            rustVersion = "1.88.0";
+            rustVersion = "1.78.0";
             packageFun = import ./Cargo.nix;
           };
 
@@ -134,8 +134,8 @@
           # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ Nix Build ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ #
 
           packages = import ./nix/packages pkgs // rec {
-            advent_of_code_2024 = rustPkgs.workspace.advent_of_code_2024 { };
-            default = advent_of_code_2024;
+            aoc_2025 = rustPkgs.workspace.aoc_2025 { };
+            default = aoc_2025;
           };
 
           # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ #
