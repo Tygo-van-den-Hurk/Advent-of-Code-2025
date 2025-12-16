@@ -1,8 +1,30 @@
 /// Instruction of which side to go, and how much.
 #[derive(Debug, Clone, Copy, PartialEq, Eq, Hash)]
 pub enum Instruction {
-    Left(i32),
-    Right(i32),
+    Left(u32),
+    Right(u32),
+}
+
+impl Instruction {
+
+    pub fn can_tick(self) -> bool {
+        return match self {
+            Instruction::Left(amount) | Instruction::Right(amount) => amount != 0,
+        }
+    }
+
+    pub fn tick(self: &mut Self) -> i32 {
+        match self {
+            Instruction::Left(amount) => {
+                *amount -= 1;
+                return -1;
+            },
+            Instruction::Right(amount) =>{
+                *amount -= 1;
+                return 1;
+            },
+        };
+    }
 }
 
 pub fn parse(input: &str) -> Vec<Instruction> {
@@ -14,7 +36,7 @@ pub fn parse(input: &str) -> Vec<Instruction> {
 
         let mut chars = line.chars();
         let direction = chars.next().unwrap();
-        let amount = chars.as_str().parse::<i32>().unwrap();
+        let amount = chars.as_str().parse::<u32>().unwrap();
 
         let instruction = match direction {
             'R' | 'r' => Instruction::Right(amount),
@@ -36,21 +58,12 @@ pub mod part1 {
         let mut zeros = 0;
 
         let mut position = 50;
-
-        for instruction in input {
-
+        for mut instruction in input {
             let old = position.clone();
 
-            match instruction {
-                Instruction::Left(amount) => {
-                    position = position - (amount%100);
-                    if position < 0 {
-                        position = 100 + position;
-                    }
-                },
-                Instruction::Right(amount) => {
-                    position = (position + amount) % 100;
-                },
+            while instruction.can_tick() {
+                position += instruction.tick();
+                position %= 100;
             }
 
             if position == 0 {
@@ -69,12 +82,46 @@ pub mod part1 {
     }
 }
 
+pub mod part2 {
+    use super::{Instruction, parse};
+
+    pub fn compute(input: Vec<Instruction>) -> i32 {
+        let mut zeros = 0;
+
+        let mut position = 50;
+
+        for mut instruction in input {
+
+            let old = position.clone();
+            while instruction.can_tick() {
+                position += instruction.tick();
+                position %= 100;
+                if position == 0 {
+                    zeros += 1;
+                }
+            }
+
+            println!("Using instruction '{instruction:?}' from '{old}' leads you to '{position}' with now '{zeros}' zeros.");
+        }
+
+        return zeros;
+    }
+
+    /// Returns the computation from the input
+    pub fn solve(input: &str) -> i32 {
+        return compute(parse(input));
+    }
+}
+
 fn main() {
     const INPUT: &str = include_str!("../input/day1.txt");
     let input = parse(INPUT);
 
-    let result1 = part1::compute(input);
-    println!("The solution to part 1 is {result1}")
+    let result1 = part1::compute(input.clone());
+    println!("The solution to part 1 is {result1}");
+
+    let result2 = part2::compute(input);
+    println!("The solution to part 2 is {result2}");
 }
 
 #[cfg(test)]
@@ -98,6 +145,13 @@ L82
     fn test_part1() {
         let result = part1::solve(INPUT);
         let expected = 3;
+        assert_eq!(result, expected);
+    }
+
+    #[test]
+    fn test_part2() {
+        let result = part2::solve(INPUT);
+        let expected = 6;
         assert_eq!(result, expected);
     }
 }
