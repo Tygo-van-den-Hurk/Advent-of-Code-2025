@@ -6,11 +6,10 @@ pub enum Instruction {
 }
 
 impl Instruction {
-
     pub fn can_tick(self) -> bool {
         return match self {
             Instruction::Left(amount) | Instruction::Right(amount) => amount != 0,
-        }
+        };
     }
 
     pub fn tick(self: &mut Self) -> i32 {
@@ -18,11 +17,11 @@ impl Instruction {
             Instruction::Left(amount) => {
                 *amount -= 1;
                 return -1;
-            },
-            Instruction::Right(amount) =>{
+            }
+            Instruction::Right(amount) => {
                 *amount -= 1;
                 return 1;
-            },
+            }
         };
     }
 }
@@ -70,7 +69,9 @@ pub mod part1 {
                 zeros += 1;
             }
 
-            println!("Using instruction '{instruction:?}' from '{old}' leads you to '{position}' with now '{zeros}' zeros.");
+            println!(
+                "Using instruction '{instruction:?}' from '{old}' leads you to '{position}' with now '{zeros}' zeros."
+            );
         }
 
         return zeros;
@@ -91,7 +92,6 @@ pub mod part2 {
         let mut position = 50;
 
         for mut instruction in input {
-
             let old = position.clone();
             while instruction.can_tick() {
                 position += instruction.tick();
@@ -101,7 +101,9 @@ pub mod part2 {
                 }
             }
 
-            println!("Using instruction '{instruction:?}' from '{old}' leads you to '{position}' with now '{zeros}' zeros.");
+            println!(
+                "Using instruction '{instruction:?}' from '{old}' leads you to '{position}' with now '{zeros}' zeros."
+            );
         }
 
         return zeros;
