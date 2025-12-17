@@ -8,6 +8,7 @@ impl Tile {
     pub const PAPER: char = '@';
     pub const EMPTY: char = '.';
 }
+
 impl std::fmt::Display for Tile {
     fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
         return write!(f, "{}", match self {
@@ -96,6 +97,14 @@ impl FloorLayout {
     pub fn new() -> FloorLayout {
         FloorLayout(Vec::new())
     }
+
+    pub fn rm(&mut self, y: usize, x: usize) {
+        if let Tile::Empty = self[y][x] {
+            panic!("Tile (y,x)=({y},{x}) is already empty.")
+        } else {
+            self[y][x] = Tile::Empty
+        }
+    }
 }
 
 pub fn parse(input: &str) -> FloorLayout {
@@ -137,7 +146,7 @@ fn amount_of_neighbors(neighborhood: &FloorLayout, (y, x): (usize, usize)) -> us
             println!("\t(y, x) == ({y}, {x})");
 
             if row_mod == 0 && col_mod == 0 {
-                println!("is current tile");
+                println!("\tis current tile");
                 continue;
             }
 
@@ -196,12 +205,71 @@ pub mod part1 {
     }
 }
 
+pub mod part2 {
+    use super::{Tile, parse, FloorLayout, amount_of_neighbors};
+
+    type Coordinate = (usize, usize);
+
+    #[derive(Debug, Clone, PartialEq, Eq, Hash, Default)]
+    struct Results {
+        total: u64,
+        rm: Vec<Coordinate>,
+    }
+
+    fn iteration(input: &mut FloorLayout) -> Results {
+        let mut results = Results::default();
+
+        for (y, row) in input.iter().enumerate() {
+            for (x, tile) in row.iter().enumerate() {
+                println!("{tile} at (y={y}, x={x}) is {tile:?}");
+                if let Tile::Paper = *tile && amount_of_neighbors(&input, (y, x)) < 4 {
+                    results.total += 1;
+                    results.rm.push((y,x));
+                }
+            }
+        }
+
+        return results;
+    }
+
+
+    pub fn compute(mut input: FloorLayout) -> u64 {
+        let mut total = 0;
+
+        println!("neighborhood = ({}x{})", input.len(), input[0].len());
+        loop {
+            let results = iteration(&mut input);
+            if results.total != 0 {
+                total += results.total;
+                for coordinate in results.rm {
+                    println!("Removed (y={}, x={})", coordinate.0, coordinate.1);
+                    input.rm(coordinate.0, coordinate.1);
+                }
+            } else {
+                println!("No changes more rolls were access, terminating.");
+                return total;
+            }
+
+            println!("After this iteration the FloorLayout looks like this:\n{input}");
+        }
+    }
+
+    /// Returns the computation from the input
+    pub fn solve(input: &str) -> u64 {
+        return compute(parse(input));
+    }
+}
+
+
 
 fn main() {
     const INPUT: &str = include_str!("../input/day4.txt");
     let input = parse(INPUT);
 
     let result1 = part1::compute(&input);
+    println!("The solution to part 1 is {result1}");
+
+    let result1 = part2::compute(input);
     println!("The solution to part 1 is {result1}");
 }
 
@@ -227,6 +295,13 @@ mod tests {
     fn test_part1() {
         let result = part1::solve(INPUT);
         let expected = 13;
+        assert_eq!(result, expected);
+    }
+
+    #[test]
+    fn test_part2() {
+        let result = part2::solve(INPUT);
+        let expected = 43;
         assert_eq!(result, expected);
     }
 }
