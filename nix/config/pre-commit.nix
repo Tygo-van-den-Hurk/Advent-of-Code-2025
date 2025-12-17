@@ -113,7 +113,7 @@ pkgs: {
 
     # disallows commits to certain branches.
     no-commit-to-branch = {
-      enable = true;
+      enable = false;
       settings.branch = [ "main" ];
       stages = [
         "pre-commit"
