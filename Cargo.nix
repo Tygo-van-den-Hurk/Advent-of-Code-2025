@@ -3,9 +3,6 @@
 
 args@{
   release ? true,
-  rootFeatures ? [
-    "aoc_2025/default"
-  ],
   rustPackages,
   hostPlatformCpu ? null,
   hostPlatformFeatures ? [ ],
