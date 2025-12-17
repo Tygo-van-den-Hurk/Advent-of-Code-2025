@@ -70,12 +70,42 @@ pub mod part1 {
     }
 }
 
+pub mod part2 {
+    use super::PuzzleInput;
+
+    pub fn compute(mut input: PuzzleInput) -> usize {
+        input.ranges.sort_by_key(|range| range.start);
+        let mut merged: Vec<std::ops::Range<usize>> = Vec::new();
+        for r in input.ranges {
+            if let Some(last) = merged.last_mut() {
+                if r.start <= last.end {
+                    last.end = last.end.max(r.end);
+                } else {
+                    merged.push(r);
+                }
+            } else {
+                merged.push(r);
+            }
+        }
+
+        merged.iter().map(|r| r.end - r.start).sum()
+    }
+
+    /// Returns the computation from the input
+    pub fn solve(input: &str) -> usize {
+        return compute(input.parse().unwrap());
+    }
+}
+
 fn main() {
     const INPUT: &str = include_str!("../input/day5.txt");
-    let input = INPUT.parse().unwrap();
+    let input: PuzzleInput = INPUT.parse().unwrap();
 
-    let result1 = part1::compute(input);
+    let result1 = part1::compute(input.clone());
     println!("The solution to part 1 is {result1}");
+
+    let result1 = part2::compute(input);
+    println!("The solution to part 2 is {result1}");
 }
 
 #[cfg(test)]
@@ -100,6 +130,13 @@ mod tests {
     fn test_part1() {
         let result = part1::solve(INPUT);
         let expected = 3;
+        assert_eq!(result, expected);
+    }
+
+    #[test]
+    fn test_part2() {
+        let result = part2::solve(INPUT);
+        let expected = 14;
         assert_eq!(result, expected);
     }
 }
