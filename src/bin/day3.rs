@@ -129,10 +129,7 @@ pub mod part2 {
             let mut stack: Vec<Battery> = Vec::with_capacity(k);
 
             for (i, &b) in battery_bank.iter().enumerate() {
-                while !stack.is_empty()
-                    && *stack.last().unwrap() < b
-                    && stack.len() + (n - i) > k
-                {
+                while !stack.is_empty() && *stack.last().unwrap() < b && stack.len() + (n - i) > k {
                     stack.pop();
                 }
 

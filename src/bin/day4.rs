@@ -11,10 +11,14 @@ impl Tile {
 
 impl std::fmt::Display for Tile {
     fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
-        return write!(f, "{}", match self {
-            Tile::Empty => Tile::EMPTY,
-            Tile::Paper => Tile::PAPER,
-        });
+        return write!(
+            f,
+            "{}",
+            match self {
+                Tile::Empty => Tile::EMPTY,
+                Tile::Paper => Tile::PAPER,
+            }
+        );
     }
 }
 
@@ -166,7 +170,10 @@ fn amount_of_neighbors(neighborhood: &FloorLayout, (y, x): (usize, usize)) -> us
                 continue;
             }
 
-            print!("\tneighborhood[y][x] == {:?}", neighborhood[y as usize][x as usize]);
+            print!(
+                "\tneighborhood[y][x] == {:?}",
+                neighborhood[y as usize][x as usize]
+            );
 
             if let Tile::Paper = neighborhood[y as usize][x as usize] {
                 total += 1;
@@ -181,7 +188,7 @@ fn amount_of_neighbors(neighborhood: &FloorLayout, (y, x): (usize, usize)) -> us
 }
 
 pub mod part1 {
-    use super::{Tile, parse, FloorLayout, amount_of_neighbors};
+    use super::{FloorLayout, Tile, amount_of_neighbors, parse};
 
     pub fn compute(input: &FloorLayout) -> u64 {
         let mut total = 0;
@@ -190,7 +197,9 @@ pub mod part1 {
         for (y, row) in input.iter().enumerate() {
             for (x, tile) in row.iter().enumerate() {
                 println!("{tile} at (y={y}, x={x}) is {tile:?}");
-                if let Tile::Paper = *tile && amount_of_neighbors(input, (y, x)) < 4 {
+                if let Tile::Paper = *tile
+                    && amount_of_neighbors(input, (y, x)) < 4
+                {
                     total += 1;
                 }
             }
@@ -206,7 +215,7 @@ pub mod part1 {
 }
 
 pub mod part2 {
-    use super::{Tile, parse, FloorLayout, amount_of_neighbors};
+    use super::{FloorLayout, Tile, amount_of_neighbors, parse};
 
     type Coordinate = (usize, usize);
 
@@ -222,16 +231,17 @@ pub mod part2 {
         for (y, row) in input.iter().enumerate() {
             for (x, tile) in row.iter().enumerate() {
                 println!("{tile} at (y={y}, x={x}) is {tile:?}");
-                if let Tile::Paper = *tile && amount_of_neighbors(&input, (y, x)) < 4 {
+                if let Tile::Paper = *tile
+                    && amount_of_neighbors(&input, (y, x)) < 4
+                {
                     results.total += 1;
-                    results.rm.push((y,x));
+                    results.rm.push((y, x));
                 }
             }
         }
 
         return results;
     }
-
 
     pub fn compute(mut input: FloorLayout) -> u64 {
         let mut total = 0;
@@ -259,8 +269,6 @@ pub mod part2 {
         return compute(parse(input));
     }
 }
-
-
 
 fn main() {
     const INPUT: &str = include_str!("../input/day4.txt");
