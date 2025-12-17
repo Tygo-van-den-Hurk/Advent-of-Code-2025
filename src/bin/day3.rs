@@ -12,7 +12,9 @@ pub fn parse(input: &str) -> Vec<Vec<Battery>> {
             if let Result::Ok(battery) = char.to_string().parse() {
                 row.push(battery);
             } else {
-                panic!("Could not convert char {char} on line {line_index} column {column_index} to a u8.")
+                panic!(
+                    "Could not convert char {char} on line {line_index} column {column_index} to a u8."
+                )
             }
         }
 
@@ -25,7 +27,6 @@ pub fn parse(input: &str) -> Vec<Vec<Battery>> {
 pub mod part1 {
     use super::{Battery, parse};
 
-
     #[derive(Debug, Clone, Copy, PartialEq, Eq, Hash)]
     struct BatteryPack(Battery, Battery);
 
@@ -37,15 +38,13 @@ pub mod part1 {
 
     impl From<BatteryPack> for u32 {
         fn from(value: BatteryPack) -> Self {
-            10*(value.0 as u32) + value.1 as u32
+            10 * (value.0 as u32) + value.1 as u32
         }
     }
 
     pub fn compute(input: &Vec<Vec<Battery>>) -> u32 {
-
         let mut total: u32 = 0;
         for battery_bank in input {
-
             let mut combination = BatteryPack(0, 0);
             for battery in battery_bank.iter().rev() {
                 if combination.1 == 0 {

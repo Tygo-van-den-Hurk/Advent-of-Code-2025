@@ -11,7 +11,7 @@ impl Range {
     }
 
     pub fn iter(&self) -> impl Iterator<Item = u64> {
-        return self.start..self.stop+1;
+        return self.start..self.stop + 1;
     }
 }
 
@@ -86,18 +86,23 @@ pub mod part2 {
     /// Checks if an ID is valid.
     pub fn is_invalid_id(id: u64) -> bool {
         let str = id.to_string();
-        let possible_substring_lengths = 1..(str.len()/2)+1;
-        let numbers: Vec<u64> = str.chars().map(|c| c.to_string().parse().unwrap()).collect();
+        let possible_substring_lengths = 1..(str.len() / 2) + 1;
+        let numbers: Vec<u64> = str
+            .chars()
+            .map(|c| c.to_string().parse().unwrap())
+            .collect();
 
         println!("\tpossible_substring_lengths: {possible_substring_lengths:?} in {str}");
         for length in possible_substring_lengths {
-            if str.len() % length != 0 { continue; }
+            if str.len() % length != 0 {
+                continue;
+            }
 
             let mut found = true;
             let substring1 = numbers.get(0..length).unwrap();
             println!("\t\tlength: {length}, substring1: {substring1:?}");
-            for index in 1..(numbers.len()/length) {
-                let next_slice_indexes = index*length..(1+index)*length;
+            for index in 1..(numbers.len() / length) {
+                let next_slice_indexes = index * length..(1 + index) * length;
                 println!("\t\t\tLooking for numbers in range: {next_slice_indexes:?}");
                 let substring2 = numbers.get(next_slice_indexes).unwrap();
                 println!("\t\t\tcomparing '{substring1:?}' with '{substring2:?}' in {str}");
